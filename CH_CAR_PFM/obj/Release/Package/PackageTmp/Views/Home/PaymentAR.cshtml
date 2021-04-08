@@ -1,0 +1,406 @@
+﻿@{ ViewBag.Title = "繳款"; } 
+@section header {
+@Styles.Render("~/Content/pages/paymentAR.min.css") }
+
+<div id="app">
+	<div v-if="pageLoading" class="loading">
+        <div class="loading-box">
+            <img src="@Url.Content("~/Content/images/loading.gif")" alt="" class="loading-pic">
+        </div>
+    </div>
+	<div class="header-box" v-bind:class="{ hasMsg: isTopmsg }">
+		<div class="header">
+			<a class="header-back"
+				href="@Url.Content("~/home")"
+			></a>
+			<p class="header-title" v-cloak>車號&nbsp;I&nbsp;{{nme}}</p>
+		</div>
+		<div class="top-msg has-close"
+			v-if="isTopmsg">
+			提醒您！逾期繳款將於最後一期清償時，依照契約條文收取延滯費用。
+			<div class="btn-close" v-on:click="closeEle"></div>
+		</div>
+	</div>
+
+	<!-- page: 繳款 -->
+	<div class="dashboard">
+		<div class="car">
+			<ul class="car-content installment">
+				<ar-element
+					v-for="ar in arCurrentData_filter"
+					v-bind:key="ar.AR_PK"
+					v-bind:ar_data="ar"
+					v-bind:all_ar_data="arCurrentData_filter"
+					v-bind:ar_pk="ar.AR_PK"
+					v-bind:ar_id="ar.AR_ID"
+					v-bind:iscurrent="ar.ISCURRENT"
+					v-bind:overdue="ar.OVERDUE"
+					v-bind:ar_dt="ar.AR_DT"
+					v-bind:ar_amt="ar.AR_AMT"
+				></ar-element>
+			</ul>
+		</div>
+		<!-- <p class="care-text">
+			＊說明：<br />
+			系統限制跨期勾選，勾選第4期時，1~3期會直接強制勾選。
+		</p> -->
+		<div class="allamount">
+			<div class="allamount-content">
+				<div class="allamount--total">
+					<p class="allamount--total-text">總計</p>
+					<p class="allamount--total-money" 
+						v-text="'$'+$options.filters.amountAddDot(updatePaymentAmount)"></p>
+				</div>
+				<div class="allamount--controll">
+					<button
+						class="allamount--controll-btn"
+						v-bind:class="{ active: paymentBtnStatus.canPaymentATM }"
+						v-on:click="paymentATM"
+					>
+						ATM繳款
+					</button>
+					<button
+						class="allamount--controll-btn"
+						v-bind:class="{ active: paymentBtnStatus.canPaymentConStore }"
+						v-on:click="paymentConStore"
+					>
+						超商繳款
+					</button>
+				</div>
+			</div>
+			<p class="allamount--tip" v-text="showTipMsg"></p>
+		</div>
+	</div>
+
+	<payment-modal></payment-modal>
+</div>
+
+@section scripts {
+<script>
+
+	const PaymentModal = Vue.component("payment-modal", {
+		
+		data: function() {
+			return {
+				isActive: false
+			};
+		},
+		computed: {
+			changeModalStatus: function() {
+				return this.isActive = store.state.modalActive;
+			}
+		},
+		template: `<transition name="fade">
+				<div class="modal-container" 
+					v-if="changeModalStatus">
+                    <div class="modal">
+                        <p class="modal-title">您尚有逾期款項未勾選</p>
+                        <p class="modal-content">請確認逾期款項是否與本期帳務一併繳清</p>
+                        <div class="modal-btn-box">
+							<div class="modal-btn"
+								v-on:click="goPayment">繼續繳納</div>
+							<div class="modal-btn"
+								v-on:click="backPage">返回勾選</div>
+                        </div>
+                    </div>
+                </div>
+			</transition>`
+		,
+		methods: {
+			goPayment: function() {
+				this.$parent.saveUserPayment();
+			},
+			backPage: function() {
+				this.$store.commit("updateModalStatus", false);
+			}
+		}
+	});
+
+	const Car = Vue.component("ar-element", {
+		props: [
+			"ar_data",
+			"ar_pk",
+			"ar_id",
+			"iscurrent",
+			"overdue",
+			"ar_dt",
+			"ar_amt",
+            "all_ar_data"
+		],
+        mixins: [myMixin],
+		data: function() {
+			return {
+				isOverdue: false,
+				isChecked: false,
+				isCurrent: false
+			};
+		},
+		created: function() {
+            var vm = this;
+
+            // 取得網址列上從明細紀錄帶過來的繳款期數
+            var pkId = this.getUrlParameter("arid");
+            if (vm.overdue === "Y") vm.isOverdue = true;
+            if (vm.overdue === "Y" || vm.iscurrent === "Y") {
+
+                // 若有繳款期數，則將 vm.ar_id 置換成繳款期數
+                if (pkId !== "") {
+                    vm.ar_id = pkId;
+                }
+
+				let tempdata = this.all_ar_data.filter(
+					c => c.AR_ID <= vm.ar_id
+				);
+				store.commit("updateCarList", tempdata);
+				store.commit("updateAmount", tempdata);
+			}
+		},
+		methods: {
+			checkedInputStatus: function(data, event) {
+				var vm = this;
+				if (event.target.checked === true) {
+					let tempdata = this.all_ar_data.filter(
+						c => c.AR_ID <= data.AR_ID
+					);
+					store.commit("updateCarList", tempdata);
+					store.commit("updateAmount", tempdata);
+				} else {
+					let tempdata = this.all_ar_data.filter(
+						c => c.AR_ID < data.AR_ID
+					);
+					store.commit("updateCarList", tempdata);
+					store.commit("updateAmount", tempdata);
+				}
+			},
+			checkCheckbox: function(ar_id) {
+                return (
+                    store.state.carList.filter(c => c.AR_ID == ar_id).length == 1
+                );
+			}
+		},
+		template: `<li class="installment-item" >
+                <label class="label--checkbox controllbox">
+                    <input type="checkbox" class="checkbox"
+                        v-bind:value="ar_pk"
+                        v-bind:checked="checkCheckbox(ar_id)"
+                        v-on:change="checkedInputStatus(ar_data, $event)" >
+                </label>
+                <div class="periods">
+                    <p class="periods--number"
+                        v-if="iscurrent ==='Y'">第 <span v-text="ar_id"></span> 期&nbsp;(本期)</p>
+                    <p class="periods--number"
+                        v-else-if="overdue ==='Y'">第 <span v-text="ar_id"></span> 期&nbsp;(逾期)</p>
+                    <p class="periods--number"
+                        v-else >第 <span v-text="ar_id"></span> 期</p>
+                    <p class="periods--limit" v-bind:class="{ textWarring: isOverdue }">截止日  <span v-text="ar_dt"></span></p>
+                </div>
+				<div class="amount"
+					v-text="'$'+$options.filters.amountAddDot(ar_amt)"></div>
+            </li>`
+	});
+
+	const store = new Vuex.Store({
+		state: {
+			amount: 0,
+			carList: [],
+			modalActive: false,
+			paymentType: ''
+		},
+		mutations: {
+			updateAmount(state, payload) {
+				try {
+					state.amount = payload
+						.map(c => parseInt(c.AR_AMT))
+						.reduce((a, b) => a + b);
+				} catch {
+					state.amount = 0;
+				}
+				return state.amount;
+			},
+			updateCarList(state, payload) {
+				return (state.carList = payload);
+			},
+			updateModalStatus(state, payload) {
+				return state.modalActive = payload;
+			},
+			updatePaymentType(state, payload) {
+				return state.paymentType = payload;		
+			}
+		},
+		getters: {
+			getCURRENT: state => {
+				const arr = state.carList.filter(function(value, index, array) {
+					return value.ISCURRENT === "Y";
+				});
+				return arr;
+			},
+			getOVERDUE: state => {
+				const arr = state.carList.filter(function(value, index, array) {
+					return value.OVERDUE === "Y";
+				});
+				return arr;
+			}
+		}
+	});
+
+	var app = new Vue({
+		el: "#app",
+		store: store,
+		mixins: [ myMixin ],
+		component: {
+			Car,
+			PaymentModal
+		},
+		data: {
+            api: '@Url.Action("GetArLv1New", "AppFormPay")',
+			arID: null,
+            cars: [],
+            nme: null,
+			arCurrentData: [],
+			arCurrentData_filter: [],
+			paymentAmount: 0,
+			paymentBtnStatus: {
+				canPaymentATM: false,
+				canPaymentConStore: false
+			},
+			tipDesc: {
+				default: "",
+				notAllowAmount: "超過超商單筆可繳款上限6萬元",
+				atm: "單筆繳款金額超過6萬元，請持繳款單自行繳納"
+			},
+			showTipMsg: "",
+            conStoreLimitAmount: 60000,
+			atmLimitAmount: 60000,
+            isTopmsg: false,
+			pageLoading: true,
+			isProxy: false
+		},
+		created: function() {
+			var vm = this;
+			vm.arID = vm.getUrlParameter("id");
+
+			axios.post(vm.api)
+				.then(function (response) {
+					vm.pageLoading = false;
+					if (response.data.Result.ReturnCode != -1) {
+						console.log(response.data.Data)
+						vm.cars = response.data.Data;
+						vm.arCurrentData = vm.cars.filter(function ( value, index, array ) {
+							return value.CNTRT_NO == vm.arID;
+                        });
+
+                        vm.nme = vm.arCurrentData[0].OBJ_ITEMS[0].NME;
+						if(vm.arCurrentData[0].OBJ_ITEMS.length > 1) vm.nme += "..."
+
+						if (vm.arCurrentData.length == 1) {
+                            vm.getCanPaymentAR(vm.arCurrentData[0].AR_LIST);
+                            vm.isTopmsg = vm.arCurrentData[0].AR_LIST.filter(x => x.OVERDUE === "Y").length > 0;
+							vm.isProxy = vm.arCurrentData[0].IS_PROXY;
+							if(!vm.isTopmsg) {
+								var body = document.getElementById("body").style.paddingTop = "60px";
+							}
+						}
+					}
+					else {
+						alert(response.data.Result.Alert)
+					}
+				})
+				.catch(function(error){
+					vm.pageLoading = false;
+					console.log(error)
+				});
+		},
+		computed: {
+			updatePaymentAmount: function() {
+				this.checkPaymentStatus();
+				return this.$store.state.amount;
+			}
+		},
+		methods: {
+			getCanPaymentAR: function(ar_list) {
+				var vm = this;
+				// 確認該標的物已繳交期數
+                var newArr = ar_list.map(function (value, index, array) {
+
+					//取出該標的物的可繳緩期數顯示在畫面上
+					if (
+						(value.PAYMENT_STATUS === "3" && value.OVERDUE === "Y")
+                        || (value.PAYMENT_STATUS === "2" && value.ISCURRENT === "Y")
+                        || (value.PAYMENT_STATUS === "2" && value.ISCURRENT === "N")
+					) {
+                        console.log("arCurrentData_filter----->ID：" + value.AR_ID + "，STATUS：" + value.PAYMENT_STATUS + "，OVERDUE：" + value.OVERDUE + "，CURRENT：" + value.ISCURRENT);
+						vm.arCurrentData_filter.push(value);
+					}
+				});
+				return newArr;
+			},
+			checkPaymentStatus: function() {
+				if(this.$store.state.amount > this.conStoreLimitAmount ) {
+					if(this.isProxy == 'Y') {
+						this.showTipMsg = this.tipDesc.atm;
+						this.paymentBtnStatus.canPaymentConStore = false;
+						this.paymentBtnStatus.canPaymentATM = false;
+					}else {
+						this.showTipMsg = this.tipDesc.notAllowAmount;
+						this.paymentBtnStatus.canPaymentConStore = false;
+						this.paymentBtnStatus.canPaymentATM = true;
+					}
+				}else if (this.$store.state.amount !== 0) {
+					this.showTipMsg = this.tipDesc.default;
+					this.paymentBtnStatus.canPaymentConStore = true;
+					this.paymentBtnStatus.canPaymentATM = true;
+				}else {
+					this.showTipMsg = this.tipDesc.default;
+					this.paymentBtnStatus.canPaymentConStore = false;
+					this.paymentBtnStatus.canPaymentATM = false;
+				}
+				return this.showTipMsg;
+			},
+			checkAllPeriods_overdue: function() {
+				var vm = this;
+				var tempArr = vm.arCurrentData_filter.filter(function (value, index, array) {
+					return value.OVERDUE == "Y"
+				})
+				return tempArr.length;
+			},
+			paymentATM: function() {
+				if (!this.paymentBtnStatus.canPaymentATM) return;
+
+				this.$store.commit("updatePaymentType", "ATM");
+				if (this.$store.getters.getOVERDUE.length !== this.checkAllPeriods_overdue()){
+					this.$store.commit("updateModalStatus", true);
+				}else {
+					this.$store.commit("updateModalStatus", false);
+
+					this.saveUserPayment();
+				}
+			},
+			paymentConStore: function() {
+				if (!this.paymentBtnStatus.canPaymentConStore) return;
+
+				this.$store.commit("updatePaymentType", "ConStore");
+				if (this.$store.getters.getOVERDUE.length !== this.checkAllPeriods_overdue()){
+					this.$store.commit("updateModalStatus", true);
+				}else {
+					this.$store.commit("updateModalStatus", false);
+					this.saveUserPayment();
+				}
+			},
+			saveUserPayment: function() {
+				// sessionStorage.clear();
+				sessionStorage.setItem('userArId', this.arID);
+				sessionStorage.setItem('userArName', JSON.stringify(this.arCurrentData[0].OBJ_ITEMS));
+				sessionStorage.setItem('userPaymentList', JSON.stringify(this.$store.state.carList));
+				sessionStorage.setItem('userPaymentType', this.$store.state.paymentType);
+				window.location.href = 'PaymentList';
+			},
+			closeEle: function() {
+				var vm = this;
+				vm.isTopmsg = false;
+				var body = document.getElementById("body").style.paddingTop = "60px";
+
+			}
+		}
+	});
+</script>
+}

@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewBag.Title = "繳款條碼";
+}
+@section header {
+@Styles.Render("~/Content/pages/barcode.min.css") }
+
+<div id="app">
+    <div v-if="pageLoading" class="loading">
+        <div class="loading-box">
+            <img src="@Url.Content("~/Content/images/loading.gif")" alt="" class="loading-pic">
+        </div>
+    </div>
+
+    <div class="header-box">
+        <div class="header">
+            <div class="header-back" v-on:click="pageBack"></div>
+            <p class="header-title">@ViewBag.Title</p>
+        </div>
+    </div>
+    <div class="barcode-container">
+        <div class="barcode711">
+            <img :src="'data:image.jpeg;base64,' + this.BarCodeImage" v-if="this.BarCodeImage != ''" class="avatar">
+        </div>
+        <div class="barcode">
+            <img :src="'data:image.png;base64,' + this.BarCodeImage1" v-if="this.BarCodeImage1 != ''" class="avatar">
+            <p class="barcode-text" v-text="barCode1"></p>
+        </div>
+        <div class="barcode">
+            <img :src="'data:image.png;base64,' + this.BarCodeImage2" v-if="this.BarCodeImage2 != ''" class="avatar">
+            <p class="barcode-text"  v-text="barCode2"></p>
+        </div>
+        <div class="barcode">
+            <img :src="'data:image.png;base64,' + this.BarCodeImage3" v-if="this.BarCodeImage3 != ''" class="avatar">
+            <p class="barcode-text"  v-text="barCode3"></p>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        var app = new Vue({
+			el: '#app',
+			mixins: [ myMixin ],
+            data: {
+                api: '@Url.Action("Get711BarCodeImg", "AppFormPay")',
+                mmergeApi: '@Url.Action("GetMergeBarCode", "AppFormPay")',
+                userPaymentList: [],
+                paymentTotal: 0,
+                barCode1: '',
+                barCode2: '',
+                barCode3: '',
+                BarCodeImage: '',
+                BarCodeImage1: '',
+                BarCodeImage2: '',
+                BarCodeImage3: '',
+                storeType: 0,
+                pageLoading: true
+            },
+            created: function() {
+                this.getBarCode();
+                if (this.storeType != 0) {
+                    this.getBarCode_fm();
+                }
+                else {
+                    this.getBarCode_711();
+                }
+            },
+            methods: {
+                getBarCode: function () {
+                    try {
+                        this.userPaymentList = JSON.parse(
+                            sessionStorage.getItem("userPaymentList")
+                        );
+                        this.paymentTotal = sessionStorage.getItem("paymentTotal");
+                        this.storeType = sessionStorage.getItem("storeType");
+                    } catch {
+                        alert("sesstion data error");
+                        // this.pageBack();
+                    }
+                },
+                getBarCode_711: function () {
+                    console.log("getBarCode_711");
+                    var vm = this;
+
+                    axios.post(vm.api, {
+                        arList: vm.userPaymentList
+                    })
+                    .then(function (response) {
+                        vm.pageLoading = false;
+                        if (response.data.Result.ReturnCode != '-1') {
+                            vm.BarCodeImage = response.data.Data.barcode;
+                        }
+                        else {
+                            alert(response.data.Result.Alert);
+                        }
+                    })
+                    .catch(function (error) {
+                        vm.pageLoading = false;
+                        console.log(error)
+                    });
+                },
+                getBarCode_fm: function () {
+                    console.log("getBarCode_fm");
+                    var vm = this;
+
+                    axios.post(vm.mmergeApi, {
+                        arList: vm.userPaymentList
+                    })
+                        .then(function (response) {
+                            vm.pageLoading = false;
+                            if (response.data.Result.ReturnCode != '-1') {
+                                vm.barCode1 = response.data.Data.BARCODE1;
+                                vm.barCode2 = response.data.Data.BARCODE2;
+                                vm.barCode3 = response.data.Data.BARCODE3;
+                                vm.BarCodeImage1 = response.data.Data.BarCodeImage1;
+                                vm.BarCodeImage2 = response.data.Data.BarCodeImage2;
+                                vm.BarCodeImage3 = response.data.Data.BarCodeImage3;
+                            }
+                            else {
+                                alert(response.data.Result.Alert);
+                            }
+                        })
+                        .catch(function (error) {
+                            vm.pageLoading = false;
+                            console.log(error)
+                        });
+                }
+            }
+        })
+    </script>
+}

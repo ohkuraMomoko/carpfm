@@ -1,0 +1,221 @@
+[
+    {
+        "CNTRT_NO": "123456",
+        "OBJ_ITEMS": [
+            { "NME": "ABC-123" }
+        ],
+        "PAYMENT_DESC": "繳款狀態描述",
+        "AR_DT": "繳款截止日(含狀態)",
+        "AR_AMT": "25000",
+        "TTL_AMT": "1000000",
+        "AR_LIST": [
+            {
+                "AR_PK": "契約編號_11",
+                "AR_ID": 1,
+                "AR_CNT": 40,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/03/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "1",
+                "OVERDUE": "N",
+                "CURRENT": "Y"
+            },
+            {
+                "AR_PK": "契約編號_12",
+                "AR_ID": 2,
+                "AR_CNT": 40,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/03/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "1",
+                "OVERDUE": "N",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_13",
+                "AR_ID": 3,
+                "AR_CNT": 40,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/03/03",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "2",
+                "OVERDUE": "N",
+                "CURRENT": "Y"
+            },
+            {
+                "AR_PK": "契約編號_14",
+                "AR_ID": 4,
+                "AR_CNT": 40,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/03/03",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "3",
+                "OVERDUE": "Y",
+                "CURRENT": "N"
+            }
+        ]
+    },
+    {
+        "CNTRT_NO": "7899998",
+        "OBJ_ITEMS": [
+            { "NME": "ABC-456" },
+            { "NME": "FFF-456" }
+        ],
+        "PAYMENT_DESC": "繳款狀態描述",
+        "AR_DT": "繳款截止日(含狀態)",
+        "AR_AMT": "25000",
+        "TTL_AMT": "1000000",
+        "AR_LIST": [
+            {
+                "AR_PK": "契約編號_21",
+                "AR_ID": 1,
+                "AR_CNT": 50,
+                "AR_AMT": "20000",
+                "AR_DT": "2019/03/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "1",
+                "OVERDUE": "N",
+                "CURRENT": "Y"
+            },
+            {
+                "AR_PK": "契約編號_22",
+                "AR_ID": 2,
+                "AR_CNT": 50,
+                "AR_AMT": "20000",
+                "AR_DT": "2019/03/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "2",
+                "OVERDUE": "Y",
+                "CURRENT": "Y"
+            },
+            {
+                "AR_PK": "契約編號_23",
+                "AR_ID": 3,
+                "AR_CNT": 50,
+                "AR_AMT": "20000",
+                "AR_DT": "2019/03/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "3",
+                "OVERDUE": "Y",
+                "CURRENT": "N"
+            }
+        ]
+    },
+    {
+        "CNTRT_NO": "1234555555",
+        "OBJ_ITEMS": [
+            { "NME": "EEE-456" },
+            { "NME": "EEE-888" },
+            { "NME": "KJN-888" }
+        ],
+        "PAYMENT_DESC": "繳款狀態描述",
+        "AR_DT": "繳款截止日(含狀態)",
+        "AR_AMT": "25000",
+        "TTL_AMT": "1000000",
+        "AR_LIST": [
+            {
+                "AR_PK": "契約編號_41",
+                "AR_ID": 1,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/01/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "1",
+                "OVERDUE": "N",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_42",
+                "AR_ID": 2,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/02/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "3",
+                "OVERDUE": "Y",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_43",
+                "AR_ID": 3,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/03/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "3",
+                "OVERDUE": "Y",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_44",
+                "AR_ID": 4,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/04/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "3",
+                "OVERDUE": "Y",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_45",
+                "AR_ID": 5,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/05/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "2",
+                "OVERDUE": "N",
+                "CURRENT": "Y"
+            },
+            {
+                "AR_PK": "契約編號_46",
+                "AR_ID": 6,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/06/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "2",
+                "OVERDUE": "N",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_47",
+                "AR_ID": 7,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/07/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "2",
+                "OVERDUE": "N",
+                "CURRENT": "N"
+            },
+            {
+                "AR_PK": "契約編號_48",
+                "AR_ID": 8,
+                "AR_CNT": 10,
+                "AR_AMT": "25000",
+                "AR_DT": "2019/08/01",
+                "AR_DESC": "繳款提示",
+                "AR_PAYDT": "系統收款日",
+                "PAYMENT_STATUS": "2",
+                "OVERDUE": "N",
+                "CURRENT": "N"
+            }
+        ]
+    }
+]

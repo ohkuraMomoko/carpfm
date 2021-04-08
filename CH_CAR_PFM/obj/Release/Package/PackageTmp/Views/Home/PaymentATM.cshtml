@@ -1,0 +1,101 @@
+﻿@{ ViewBag.Title = "ATM繳款"; } @section header {
+@Styles.Render("~/Content/pages/paymentATM.min.css") }
+
+<div id="app">
+	<div class="header-box">
+        <div class="header">
+            <div class="header-back" v-on:click="pageBack"></div>
+            <p class="header-title">@ViewBag.Title</p>
+            <a href="@Url.Content("~/home/close")" class="header-close">完成</a>
+        </div>
+    </div>
+	<div class="dashboard">
+        <div class="card">
+            <div class="card-header">
+                <p class="card-header--title">繳款總額</p>
+                <p class="card-header--amount" v-cloak>${{ paymentTotal | amountAddDot }}</p>
+            </div>
+            <div class="card-content">
+                <p class="card-content--title">轉帳資訊</p>
+                <div class="payment">
+                    <div class="payment-item">
+						<span>銀行代碼</span>
+                        <span class="payment-item--data" v-cloak>{{bankCode}} {{bankName}}</span>
+					</div>
+					<div class="payment-item">
+						<span>帳號</span>
+                        <span class="payment-item--data" v-text="atmAccntno"></span>
+					</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <p class="card-footer--desc">完成繳款後，<span>第二個營業日</span>，方可從「繳款紀錄」功能，查詢匯款資訊。
+					<br><br>
+					溫馨提醒：<br>
+					您好，使用ATM或數位通路轉帳，若帳單應繳金額超過您的轉出帳戶銀行規定的最高轉出限額，您可向轉出帳戶銀行約定ATM繳款帳號或洽詢您的業務。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        var app = new Vue({
+			el: '#app',
+			mixins: [ myMixin ],
+            data: {
+                api: '@Url.Action("GetMergeBarCode", "AppFormPay")',
+                userArId: null,
+                userArName: [],
+                userPaymentList: [],
+                userPaymentType: "",
+                paymentTotal: 0,
+                bankCode: '',
+                bankName: '',
+                atmAccntno: ''
+            },
+            created: function() {
+                this.getUserPayment();
+                this.getBarCode_fm();
+            },
+            methods: {
+                getUserPayment: function() {
+					try {
+						this.userArId = sessionStorage.getItem("userArId");
+						this.userArName = JSON.parse(
+							sessionStorage.getItem("userArName")
+						);
+						this.userPaymentList = JSON.parse(
+							sessionStorage.getItem("userPaymentList")
+						);
+						this.userPaymentType = sessionStorage.getItem(
+							"userPaymentType"
+						);
+						this.paymentTotal = sessionStorage.getItem("paymentTotal");
+					}catch {
+						alert("sesstion data error");
+						// this.pageBack();
+					}
+                },
+                getBarCode_fm: function () {
+                    console.log("getBarCode_fm");
+                    var vm = this;
+
+                    axios.post(vm.api, {
+                        arList: vm.userPaymentList
+                    })
+                        .then(function (response) {
+                            if (response.data.Result.ReturnCode != -1) {
+                                vm.bankCode = response.data.Data.BANK_CODE;
+                                vm.bankName = response.data.Data.BANK_NME;
+                                vm.atmAccntno = response.data.Data.ATM_ACCNTNO;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        });
+                }
+            }
+        })
+    </script>
+}

@@ -1,0 +1,61 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_mixins.scss";
+
+/* Component: modal =============*/
+.modal-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(#000, 0.2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+.modal {
+    $w: 325px;
+    width: $w;
+    background-color: #fff;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.09);
+    border-radius: 30px;
+    padding: 2.5rem 5% 0;
+    position: absolute;
+    left: calc((100% - #{$w})/2);
+    top: 20%;
+    &-title {
+        font-weight: bold;
+        font-size: 1.13rem;
+        letter-spacing: 0.03rem;
+        text-align: center;
+    }
+    &-content {
+        color: #979797;
+        letter-spacing: 0.03rem;
+        line-height: 1.38rem;
+        padding: 1.25rem 0 2rem;
+        text-align: justify;
+    }
+    &-btn-box {
+        border-top: 1px solid #E2E2E2;
+        display: flex;
+        position: relative;
+        &:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            $h: 65%;
+            top: (100% - $h)/2;
+            height: 60%;
+            width: 1px;
+            background-color: #e2e2e2;
+        }
+    }
+    &-btn {
+        width: 50%;
+        line-height: 4.25rem;
+        font-size: 1.13rem;
+        letter-spacing: 0.03rem;
+        color: $color-primary;
+        text-align: center;
+        cursor: pointer;
+    }
+}

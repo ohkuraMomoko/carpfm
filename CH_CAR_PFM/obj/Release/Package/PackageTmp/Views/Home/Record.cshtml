@@ -1,0 +1,149 @@
+﻿@{ ViewBag.Title = "我的帳單"; } 
+@section header {
+@Styles.Render("~/Content/pages/record.min.css") }
+
+<div id="app">
+	<div v-if="pageLoading" class="loading">
+        <div class="loading-box">
+            <img src="@Url.Content("~/Content/images/loading.gif")" alt="" class="loading-pic">
+        </div>
+    </div>
+	<div class="header-box">
+		<div class="header">
+			<a class="header-back" href="@Url.Content("~/home/close")"></a>
+			<p class="header-title">@ViewBag.Title</p>
+		</div>
+		<div class="tabs">
+			<a class="tabs-item" href="@Url.Content("~/home")">繳款</a>
+			<div class="tabs-item active">繳款紀錄</div>
+		</div>
+	</div>
+
+	<!-- page: 繳款 -->
+	<div v-if="pageError" class="dashboard page-error" v-cloak>
+        <p class="page-error--text">很抱歉！系統忙碌中，請稍後再試！</p>
+    </div>
+	<div v-else class="dashboard" v-cloak>
+		<!-- data: .car = 一筆標的物 -->
+		<car-element
+			v-for="car in cars"
+			v-bind:key="car.CNTRT_NO"
+			v-bind:cntrt_no="car.CNTRT_NO"
+			v-bind:obj_items="car.OBJ_ITEMS"
+			v-bind:ttl_amt="car.TTL_AMT"
+			v-bind:aply_dt="car.APLY_DT"
+			v-bind:pay_ar_cnt="car.PAY_AR_CNT"
+			v-bind:last_paydt="car.LAST_PAYDT"
+			v-bind:total_ar_cnt="car.TOTAL_AR_CNT"
+		></car-element>
+		<p class="care-text">
+            溫馨提醒：<br />
+            便利商店代收上限為新台幣6萬元，若帳單應繳金額超過代收上限，請您利用其他方式繳款。<br />
+            ATM繳款帳號：<br />
+            使用ATM或數位通路轉帳，若帳單應繳金額超過您的轉出帳戶銀行規定的最高轉出限額，您可向轉出帳戶銀行約定ATM繳款帳號或洽詢您的業務。
+            <br />
+            逾期延滯費用：<br />
+            提醒您！逾期繳款將於最後一期清償時，依照契約條文收取延滯費用。
+        </p>
+	</div>
+</div>
+
+@section scripts {
+<script>
+	const Car = Vue.component("car-element", {
+        props: ["obj_items", "ttl_amt", "cntrt_no", "aply_dt", "pay_ar_cnt", "total_ar_cnt","last_paydt"],
+		data: function() {
+			return {
+				statusIsNull: false
+			};
+		},
+		created: function() {
+            var vm = this;
+
+            if (vm.pay_ar_cnt === 0 && vm.total_ar_cnt === 0) {
+                vm.statusIsNull = true;
+                console.log('statusIsNull：' + vm.statusIsNull);
+
+                return;
+            }
+
+            // 最後繳款日期不為空值，表示全部款項已經繳清，此時要判斷是否在繳清後30日內，是的話則還是要顯示繳款紀錄
+            if (vm.last_paydt !== "") {
+                let reg = new RegExp('-', 'g')
+
+                // 將最後繳款日期加上30天
+                var date = new Date(vm.last_paydt.replace(reg, '/')).addDays(30);
+
+                // 若該標的物已繳期數 = 總期數 ，並且檢款完超過30天 => 無繳款紀錄
+                if (vm.pay_ar_cnt == vm.total_ar_cnt && new Date() > date) vm.statusIsNull = true;
+                console.log('statusIsNull：' + vm.statusIsNull);
+            }
+		},
+		computed: {},
+		methods: {
+		},
+		template: `<div class="car">
+                <div class="car-header" >
+                    <div class="car-header--number">
+                        <div class="car-header--number-text">車號&nbsp;I&nbsp;</div>
+                        <div class="car-header--number-data">
+                            <p v-for="item in obj_items" v-text="item.NME"></p>
+                        </div>
+                    </div>
+                    <span v-if="!statusIsNull" class="car-header--periods" v-cloak>已繳 {{ pay_ar_cnt }} 期 / 共 {{ total_ar_cnt }} 期</span>
+                </div>
+				<div v-if="statusIsNull" class="car-status">
+                    <p class="car-status--text">無繳款紀錄</p>
+                </div>
+				<div v-else>
+					<ul class="car-content installment">
+						<li class="installment-item">
+							<div class="event">
+								<p class="event--title">案件總金額</p>
+								<p class="event--date" v-cloak>申請日 {{ aply_dt }}</p>
+							</div>
+							<div class="amount" v-cloak>$ {{ ttl_amt | amountAddDot }}</div>
+						</li>
+					</ul>
+					<a class="car-footer viewmore" v-bind:href="'@Url.Content("~/home/recordDetail?id=")' + cntrt_no">
+						前往查看<img src="@Url.Content("~/Content/images/arrow_right.svg")" alt="arrow">
+					</a>
+				</div>
+            </div>`
+	});
+
+	var app = new Vue({
+		el: "#app",
+		mixins: [ myMixin ],
+		component: { Car },
+		data: {
+            userID: null,
+            api: '@Url.Action("GetArRecLv1", "AppFormPay")',
+			cars: [],
+			pageError: false,
+			pageLoading: true
+		},
+		created: function() {
+			var vm = this;
+
+            axios.post(vm.api)
+                .then(function (response) {
+					vm.pageLoading = false;
+					if (response.data.Result.ReturnCode != -1) {
+						console.log(response.data.Data)
+						vm.cars = response.data.Data;
+					}
+					else {
+						console.log(response.data.Result.Alert);
+						vm.pageError = true;
+				}
+				})
+				.catch(function(error){
+					vm.pageLoading = false;
+					console.log(error);
+					vm.pageError = true;
+				});
+		}
+	});
+</script>
+}

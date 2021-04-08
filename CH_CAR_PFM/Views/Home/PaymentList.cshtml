@@ -1,0 +1,153 @@
+﻿@{ ViewBag.Title = "繳款"; } @section header {
+@Styles.Render("~/Content/pages/paymentList.min.css") }
+
+<div id="app">
+	<div class="header-box">
+		<div class="header">
+			<div class="header-back" v-on:click="pageBack"></div>
+			<p class="header-title" v-cloak>{{ userPaymentType | pageTitle }}</p>
+		</div>
+		<div class="top-msg" v-if="this.userPaymentType === 'ConStore'">
+			超商繳款請至萊爾富、全家、7-11繳款
+		</div>
+	</div>
+	
+	<div class="dashboard">
+		<div class="installment">
+			<div class="installment--title">繳款項目</div>
+			<div class="installment--content">
+				<div class="ar">
+					<div class="ar-header">
+						<div class="ar-header--text">車號&nbsp;I&nbsp;</div>
+						<div class="ar-header--number">
+							<p v-for="ar in userArName" v-text="ar.NME"></p>
+						</div>
+					</div>
+					<ul class="ar-list">
+						<ar
+							v-for="ar in userPaymentList"
+							v-bind:key="ar.AR_PK"
+							v-bind:ar_id="ar.AR_ID"
+							v-bind:ar_amount="ar.AR_AMT"
+						></ar>
+					</ul>
+				</div>
+			</div>
+			<div class="installment--footer">
+				<div class="payment">
+					<span class="payment--text">繳款總額</span>
+					<span class="payment--amount"
+						v-text="'$'+$options.filters.amountAddDot(totalAmount)"
+						></span>
+				</div>
+				<div class="payment-btn" v-on:click="goPayment">前往繳款</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts {
+<script>
+	const Ar = Vue.component("ar", {
+		props: ["ar_id", "ar_amount"],
+		data: function() {
+			return {};
+		},
+		created: function() {},
+		methods: {},
+		template: `<li class="ar-item">
+                <span class="ar-item--id">第 <span v-text="ar_id"></span>期</span>
+                <span class="ar-item--amount" v-cloak>$ {{ ar_amount | amountAddDot }}</span>
+            </li>`
+	});
+
+	var app = new Vue({
+		el: "#app",
+		mixins: [ myMixin ],
+		data: {
+            api: '@Url.Action("ValidateArPay", "AppFormPay")',
+			userArId: null,
+			userArName: [],
+			userPaymentList: [],
+            userPaymentType: "",
+            paymentTotal: 0
+		},
+		created: function() {
+			this.getUserPayment();
+		},
+		filters: {
+			pageTitle: function(val) {
+				var tempTitle = "";
+				if (val === "ConStore") {
+					tempTitle = "超商繳款";
+				} else {
+					tempTitle = "ATM繳款";
+					var body = document.getElementById("body").style.paddingTop = "60px";
+				}
+				return tempTitle;
+			}
+		},
+		computed: {
+			totalAmount: function() {
+				this.paymentTotal = this.userPaymentList
+					.map(c => parseInt(c.AR_AMT))
+					.reduce((a, b) => a + b);
+				sessionStorage.setItem("paymentTotal",this.paymentTotal);
+				return this.paymentTotal;
+			}
+		},
+		methods: {
+			getUserPayment: function() {
+                try {
+                    this.userArId = sessionStorage.getItem("userArId");
+                    this.userArName = JSON.parse(
+                        sessionStorage.getItem("userArName")
+                    );
+                    this.userPaymentList = JSON.parse(
+                        sessionStorage.getItem("userPaymentList")
+                    );
+                    this.userPaymentType = sessionStorage.getItem(
+                        "userPaymentType"
+                    );
+                }catch {
+                    alert("sesstion data error");
+					this.pageBack();
+                }
+			},
+			goPayment: function() {
+				var vm = this;
+                var api_CNTRT_NO = vm.userArId;
+
+				// 應繳款該期期數[int陣列]
+				var api_AR_ID_ITEMS = vm.userPaymentList.map(v => v.AR_ID);
+                var api_AR_AMT_SUM = vm.paymentTotal;
+
+                // 繳款方式(1:ATM 2:超商繳款)
+				var api_PAY_METHOD = vm.userPaymentType === "ConStore" ? "2" : "1";
+
+				axios.post(vm.api, {
+					arIdItems: api_AR_ID_ITEMS,
+					arAmtSum: api_AR_AMT_SUM,
+					payMethod: api_PAY_METHOD,
+					CNTRT_NO: api_CNTRT_NO
+				})
+				.then(function (response) {
+					if (response.data.Result.ReturnCode != -1 && response.data.Data.RESULT == "Y") {
+						console.log(response.data.Data)
+						// vm.cars = response.data.Data;
+						// TODO: 移動到API驗證成功後
+						window.location.href = vm.userPaymentType === "ConStore" ? "PaymentConStore" : "PaymentATM";
+					}
+					else {
+						alert(response.data.Result.Alert)
+					}
+				})
+				.catch(function(error){
+					console.log(error)
+				});
+
+			}
+		}
+	});
+</script>
+}

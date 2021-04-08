@@ -1,0 +1,252 @@
+﻿@{ ViewBag.Title = "道路救援"; }
+@section header {
+    @Styles.Render("~/Content/pages/rescue.min.css?v=3")
+}
+
+<div id="app">
+    <div v-if="pageLoading" class="loading">
+        <div class="loading-box">
+            <img src="@Url.Content("~/Content/images/loading.gif")" alt="" class="loading-pic">
+        </div>
+    </div>
+
+    <div class="header-box">
+        <div class="header">
+            <a class="header-back" href="@Url.Content("~/home/close")"></a>
+            <p class="header-title">@ViewBag.Title</p>
+        </div>
+    </div>
+
+    <div v-if="pageError" class="dashboard page-error" v-cloak>
+        <p class="page-error--text">很抱歉！系統忙碌中，請稍後再試！</p>
+    </div>
+    <div v-else class="dashboard tab" v-cloak>
+        <div class="tab-top">
+            <div class="tab-top--item"
+                 v-bind:class="tabIsActive === 1 ? 'active' : ''"
+                 @@click="tabIsActive = 1">信用卡</div>
+            <div class="tab-top--item"
+                 v-bind:class="tabIsActive === 2 ? 'active' : ''"
+                 @@click="tabIsActive = 2">保險</div>
+            <div class="tab-top--item"
+                 v-bind:class="tabIsActive === 3 ? 'active' : ''"
+                 @@click="tabIsActive = 3">一般</div>
+        </div>
+        <div class="tab-content"
+             v-if="tabIsActive === 1">
+            <div class="search credit-card">
+                <input type="text" name="inputCreditCard" id="inputCreditCard" class="search--input" placeholder="輸入信用卡銀行名稱"
+                       v-model.trim="keywordBank">
+                <div class="search--btn"
+                     @@click="filterBankData()">快速搜尋</div>
+            </div>
+            <bank-card v-for="bank in BankData"
+                       v-bind:key="'bank' + bank.BANK_SEQ"
+                       v-bind:bank_data="bank"></bank-card>
+        </div>
+        <div class="tab-content"
+             v-else-if="tabIsActive === 2">
+            <div class="search insurance">
+                <input type="text" name="inputInsurance" id="inputInsurance" class="search--input" placeholder="輸入保險公司名稱"
+                       v-model.trim="keywordInsurance">
+                <div class="search--btn"
+                     @@click="filterInsuranceData()">快速搜尋</div>
+            </div>
+            <insurance-card v-for="insurance in InsuranceData"
+                            v-bind:key="'insurance' + insurance.INSURANCE_SEQ"
+                            v-bind:insurance_data="insurance"></insurance-card>
+        </div>
+        <div class="tab-content"
+             v-else-if="tabIsActive === 3">
+            <p class="tab-content--title">小型車拖救收費基準</p>
+            <p class="tab-content--desc">
+                1、拖救費：<br>
+                自拖救地點起算，拖救里程在10公里以內，收基本費1,500元、大型重型機車考量其無法比照小型車托起前輪以後輪著地方式拖救，故其拖救費依小型車加收第二類現場作業費900元，收基本費2,400元，基本費為上限，超出10公里之里程，每公里加收50元正。
+                <br><br>
+                2、現場作業費：<br>
+                第一類：收取1,800元<br>
+                車輛翻覆<br>
+                衝至上、下邊坡<br>
+                撞入大車底盤<br>
+                掉入山谷下<br>
+                衝上護欄<br>
+                第二類：收取900元<br>
+                陷入水溝<br>
+                後輪破損<br>
+                後輪或四輪傳動車<br>
+                底盤於10至15公分之車輛<br>
+                底盤卡於凸起障礙物<br>
+                小貨車拆除地軸或傳動軸<br>
+                機件因素致無法以後車輪著地直接執行拖救作業<br>
+                同時有兩類情形發生時，取其計費較高者。<br>
+                以上各類費用不含拖救費用，拖救費按拖救計費方式辦理。<br>
+                其他輕微事故(除第一類、第二類外)不收取現場作業費。<br>
+                <br>3、待時費：<br>
+                事故車輛拖至警察局製作筆錄，拖救車等待期間之費用，每小時以150元計，第1小時若不足30分鐘不予計費，超過1小時以上，不足1小時之時間以1小時計。
+                <br><br>
+                4、本項收費價格已包含營業稅、執行拖救作業之危險津貼、假日及夜間加成、通行費及其他各種費用在內。
+            </p>
+            <div class="tab-footer">
+                <a href="tel:0800010010" class="tel-link" target="_blank">
+                    全鋒道路救援  0800-010-010
+                    <img src="@Url.Content("~/Content/images/ic_next_w.svg")" alt="" class="tel-link--arrow">
+                </a>
+                <a href="tel:0800011898" class="tel-link" target="_blank">
+                    行遍天下       0800-011-898
+                    <img src="@Url.Content("~/Content/images/ic_next_w.svg")" alt="" class="tel-link--arrow">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        const bankCard = Vue.component("bank-card", {
+            props: ["bank_data"],
+            data: function() {
+                return {
+                };
+            },
+            created: function() {
+                var vm = this;
+
+            },
+            template:
+                `<div class="card">
+                    <div class="card-top">
+                        <span class="card-top--title" v-text="bank_data.BANK_NME"></span>
+                        <a class="card-top--info" target="_blank"
+                            v-bind:href="bank_data.BANK_URL" >官網道路救援資訊</a>
+                    </div>
+                    <a target="_blank" class="card-tel"
+                        v-bind:href="'tel:' + bank_data.BANK_TEL">
+                        <img src="@Url.Content("~/Content/images/bankcall_g.svg")" alt="" class="card-tel--phone">
+                        客服 {{ bank_data.BANK_TEL_DISPLAY }}
+                        <img src="@Url.Content("~/Content/images/ic_next_w.svg")" alt="" class="card-tel--arrow">
+                    </a>
+                </div>`
+        });
+
+        const insuranceCard = Vue.component("insurance-card", {
+            props: ["insurance_data"],
+            template:
+                `<div class="card">
+                    <div class="card-top">
+                        <span class="card-top--title" v-text="insurance_data.INSURANCE_NME"></span>
+                    </div>
+                    <a class="card-tel" target="_blank"
+                        v-bind:href="'tel:' + insurance_data.INSURANCE_TEL">
+                        <img src="@Url.Content("~/Content/images/bankcall_g.svg")" alt="" class="card-tel--phone">
+                        客服 {{ insurance_data.INSURANCE_TEL_DISPLAY }}
+                        <img src="@Url.Content("~/Content/images/ic_next_w.svg")" alt="" class="card-tel--arrow">
+                    </a>
+                </div>`
+        })
+
+        var app = new Vue({
+			el: '#app',
+			mixins: [ myMixin ],
+            component: {
+                bankCard,
+                insuranceCard
+            },
+            data: {
+                api_GetBank: '@Url.Action("GetBank", "AppFormPay")',
+                api_GetInsurance: '@Url.Action("GetInsurance", "AppFormPay")',
+                tabIsActive: 1,
+                pageError: false,
+                pageLoading: true,
+                BankData: [],
+                api_BankData: [],
+                InsuranceData: [],
+                api_InsuranceData: [],
+                keywordBank: '',
+                keywordInsurance: ''
+            },
+            created: function() {
+                var vm = this;
+                vm.api_BankData = vm.BankData
+                vm.api_InsuranceData = vm.InsuranceData
+                vm.pageLoading = false;
+
+                axios.post(vm.api_GetBank)
+                .then(function (response) {
+                    vm.pageLoading = false;
+                    if (response.data.Result.ReturnCode != -1) {
+                        vm.BankData = response.data.Data;
+                        vm.api_BankData = vm.BankData
+                    }
+                    else {
+                        console.log(response.data.Result.Alert);
+                        vm.pageError = true;
+                    }
+                })
+                .catch(function(error){
+                    vm.pageLoading = false;
+                    console.log(error);
+                    vm.pageError = true;
+                });
+
+                axios.post(vm.api_GetInsurance)
+                .then(function (response) {
+                    vm.pageLoading = false;
+                    if (response.data.Result.ReturnCode != -1) {
+                        vm.InsuranceData = response.data.Data;
+                        vm.api_InsuranceData = vm.InsuranceData
+                    }
+                    else {
+                        console.log(response.data.Result.Alert);
+                        vm.pageError = true;
+                    }
+                })
+                .catch(function(error){
+                    vm.pageLoading = false;
+                    console.log(error);
+                    vm.pageError = true;
+                });
+
+            },
+            methods: {
+                filterBankData() {
+                    var vm = this
+                    if(vm.keywordBank == "") {
+                        vm.BankData = vm.api_BankData
+                        alert("請輸入搜尋條件");
+                        return
+                    }
+
+                    var temp = vm.api_BankData.filter(function(value, index, array) {
+                        return value.BANK_NME.search(vm.keywordBank) !== -1
+                    });
+
+                    if(temp.length == 0) {
+                        alert("查無資料");
+                        vm.BankData = vm.api_BankData
+                    }else {
+                        vm.BankData = temp
+                    }
+                    
+                },
+                filterInsuranceData() {
+                    var vm = this
+                    if(vm.keywordInsurance == "") {
+                        vm.InsuranceData = vm.api_InsuranceData
+                        alert("請輸入搜尋條件");
+                        return
+                    }
+
+                    var temp = vm.api_InsuranceData.filter(function(value, index, array) {
+                        return value.INSURANCE_NME.search(vm.keywordInsurance) !== -1
+                    });
+
+                    if(temp.length == 0) {
+                        alert("查無資料");
+                        vm.InsuranceData = vm.api_InsuranceData
+                    }else {
+                        vm.InsuranceData = temp
+                    }
+                }
+            }
+        })
+    </script>
+}

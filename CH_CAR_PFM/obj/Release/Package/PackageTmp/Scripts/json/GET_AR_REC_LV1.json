@@ -1,0 +1,56 @@
+[
+    {
+        "CNTRT_NO": "123456",
+        "OBJ_ITEMS": [
+            {
+                "NME": "ABC-123"
+            }
+        ],
+        "PAYMENT_DESC": "繳款狀態描述",
+        "AR_DT": "2019/09/10",
+        "AR_AMT": "25000",
+        "TTL_AMT": "1000000",
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50,
+        "APLY_DT": "2019/07/01"
+    },
+    {
+        "CNTRT_NO": "7899998",
+        "OBJ_ITEMS": [
+            {
+                "NME": "ABC-456"
+            },
+            {
+                "NME": "FFF-456"
+            }
+        ],
+        "PAYMENT_DESC": "繳款狀態描述",
+        "AR_DT": "2019/09/10",
+        "AR_AMT": "25000",
+        "TTL_AMT": "1000000",
+        "PAY_AR_CNT": 1,
+        "TOTAL_AR_CNT": 40,
+        "APLY_DT": "2019/01/01"
+    },
+    {
+        "CNTRT_NO": "1234555555",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAYMENT_DESC": "繳款狀態描述",
+        "AR_DT": "2019/09/10",
+        "AR_AMT": "25000",
+        "TTL_AMT": "1000000",
+        "PAY_AR_CNT": 0,
+        "TOTAL_AR_CNT": 66,
+        "APLY_DT": "2019/03/01"
+    }
+]

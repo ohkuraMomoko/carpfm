@@ -1,0 +1,208 @@
+﻿@{ ViewBag.Title = "繳款明細"; } @section header {
+    @Styles.Render("~/Content/pages/recordDetail.min.css") }
+
+<div id="app">
+	<div v-if="pageLoading" class="loading">
+        <div class="loading-box">
+            <img src="@Url.Content("~/Content/images/loading.gif")" alt="" class="loading-pic">
+        </div>
+    </div>
+	
+	<div class="header-box">
+		<div class="header">
+			<a class="header-back" href="@Url.Content("~/home/record")"></a>
+			<p class="header-title">@ViewBag.Title</p>
+		</div>
+		<div class="top-msg">約需三個工作天，您的繳款紀錄才會更新</div>
+	</div>
+	
+	<div class="dashboard">
+		<div class="car">
+			<div class="car-header">
+				<div class="car-header--number">
+					<div class="car-header--number-text">車號&nbsp;I&nbsp;</div>
+					<div class="car-header--number-data">
+						<!-- TODO: 等API規格修正:要改成多行(1~3個車號) -->
+						<p v-for="ar in obj_items" v-text="ar.NME"></p>
+					</div>
+				</div>
+				<!-- TODO: 等API規格修正: -->
+				<span class="car-header--periods" v-cloak>已繳 {{ pay_ar_cnt }} 期 / 共 {{ total_ar_cnt }} 期</span>
+			</div>
+			<ul class="car-content installment">
+				<car-element
+					v-for="car in cars"
+					v-bind:key="car.AR_PK"
+					v-bind:car_data="car"
+					v-bind:ar_id="car.AR_ID"
+					v-bind:ar_amt="car.AR_AMT"
+					v-bind:ar_dt="car.AR_DT"
+					v-bind:ar_paydt="car.AR_PAYDT"
+					v-bind:payment_status="car.PAYMENT_STATUS"
+					v-bind:overdue="car.OVERDUE"
+					v-bind:current="car.ISCURRENT"
+				></car-element>
+			</ul>
+		</div>
+	</div>
+	<payment-modal></payment-modal>
+</div>
+@section scripts {
+    <script>
+	const PaymentModal = Vue.component("payment-modal", {
+		data: function() {
+			return {
+				isActive: false
+			};
+		},
+		computed: {
+			changeModalStatus: function() {
+				return this.isActive = store.state.modalActive;
+			}
+		},
+		template: `<transition name="fade">
+				<div class="modal-container"
+					v-if="changeModalStatus">
+					<div class="modal">
+						<div class="modal-btn modal-btn--type"
+							v-on:click="goPayment('ConStore')">超商繳款</div>
+						<div class="modal-btn modal-btn--type"
+							v-on:click="goPayment('ATM')">ATM繳款</div>
+						<div class="modal-btn"
+							v-on:click="backPage">取消</div>
+					</div>
+				</div>
+			</transition>`
+		,
+		methods: {
+			goPayment: function(type) {
+				this.$store.commit("updatePaymentType", type);
+				this.$parent.saveUserPayment();
+			},
+			backPage: function() {
+				this.$store.commit("updateModalStatus", false);
+			}
+		}
+	});
+
+	const Car = Vue.component("car-element", {
+		props: [
+			"car_data",
+			"ar_id",
+			"ar_amt",
+            "ar_dt",
+            "ar_paydt",
+			"payment_status",
+            "overdue",
+            "current"
+		],
+		data: function() {
+			return {
+                isOverdue: false,
+                pay_type: null
+			}
+		},
+		created: function() {
+			var vm = this;
+            if (vm.overdue === "Y") vm.isOverdue = true;
+            if (vm.payment_status === "1") {
+                vm.pay_type = "繳款日";
+            }
+            else {
+                vm.pay_type = "截止日";
+            }
+		},
+		methods: {
+            showModal: function (car_data) {
+                var path = 'PaymentAR?id=' + car_data.AR_PK.substring(0, car_data.AR_PK.indexOf("_")) + '&arid=' + car_data.AR_ID;
+                window.location.href = path;
+			}
+		},
+		template: `<li class="installment-item">
+					<div class="info">
+						<p class="info-periods" v-if="!isOverdue && ar_paydt > ar_dt">第 <span v-text="ar_id"></span> 期&nbsp;(逾期)</p>
+						<p class="info-periods" v-else >第 <span v-text="ar_id"></span> 期</p>
+						<p class="info-status" v-bind:class="{ textWarring: isOverdue } " v-if="payment_status ==='1'" v-cloak>{{pay_type}} {{ ar_paydt }}</p>
+						<p class="info-status" v-bind:class="{ textWarring: isOverdue } " v-else v-cloak>{{pay_type}} {{ ar_dt }}</p>
+						<p class="info-amount" v-cloak>$ {{ ar_amt | amountAddDot }}</p>
+					</div>
+					<div class="control">
+						<div class="control-status"
+							v-if="payment_status ==='1'"
+						>已繳款</div>
+						<div class="control-payment"
+                            v-if="payment_status ==='3' || (payment_status ==='2' && current === 'Y')"
+							v-on:click="showModal(car_data)"
+						>前往繳款</div>
+					</div>
+				</li>`
+	})
+
+	const store = new Vuex.Store({
+		state: { modalActive:false },
+		mutations: {
+			updateCarList(state, payload) {
+				return (state.carList = payload);
+			},
+			updateModalStatus(state, payload) {
+				return state.modalActive = payload;
+			},
+			updatePaymentType(state, payload) {
+				return state.paymentType = payload;
+			}
+		}
+	})
+    var app = new Vue({
+		el: '#app',
+		store: store,
+		mixins: [ myMixin ],
+        component: { Car },
+        data: {
+			arID: null,
+            api:'@Url.Action("GetArRec", "AppFormPay")',
+			cars: [],
+			obj_items: [],
+			pay_ar_cnt: 0,
+            total_ar_cnt: null,
+			pageLoading: true
+		},
+        created: function() {
+            var vm = this;
+            vm.arID = vm.getUrlParameter("id");
+
+            axios.post(vm.api, { cntrtNo: vm.arID })
+				.then(function(response) {
+					vm.pageLoading = false;
+					if (response.data.Result.ReturnCode != -1) {
+						console.log(response.data.Data)
+						vm.cars = response.data.Data;
+						vm.obj_items = vm.cars[0].OBJ_ITEMS;
+                        vm.total_ar_cnt = vm.cars[0].AR_CNT;
+						vm.cars.filter(function (value, index, array) {
+							if (value.PAYMENT_STATUS === "1") {
+								vm.pay_ar_cnt += 1;
+							}
+						});
+					}
+					else {
+						alert(response.data.Result.Alert)
+					}
+				})
+				.catch(function(error){
+					vm.pageLoading = false;
+					console.log(error)
+				});
+		},
+		methods: {
+			saveUserPayment: function() {
+				sessionStorage.clear();
+				sessionStorage.setItem('userArId', this.arID);
+				sessionStorage.setItem('userArName',JSON.stringify(this.$store.state.carList[0].OBJ_ITEMS));
+				sessionStorage.setItem('userPaymentList', JSON.stringify(this.$store.state.carList));
+				sessionStorage.setItem('userPaymentType', this.$store.state.paymentType);
+				window.location.href = 'PaymentList';
+			}
+		}
+    })
+    </script>
+}

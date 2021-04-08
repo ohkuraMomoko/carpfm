@@ -1,0 +1,138 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_reset.scss"; 
+@import "../setting/_mixins.scss"; 
+
+body {
+    padding-top: 100px;
+}
+
+/* Block: .car ----------*/
+.car {
+    background-color: #fff;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.09);
+    margin-bottom: 0.94rem;
+    &-footer {
+        display: block;
+        font-size: 0.88rem;
+        letter-spacing: 0.03rem;
+        line-height: 2.25rem;
+        color: #979797;
+        text-align: right;
+        padding-right: 10px;
+        cursor: pointer;
+        >img {
+            width: 12px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+    }
+}
+.car-header {
+    min-height: 2.88rem;
+    line-height: 2.88rem;
+    color: #fff;
+    background-color: $color-primary-bg;
+    border-top: 2px solid #6CB7D2;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &--number {
+        font-size: 1.13rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        &-data {
+            line-height: 1.5;
+        }
+    }
+}
+
+/* Element: .installment ----------*/
+.installment {
+    margin: 0;
+    &-item {
+        width: 95%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto;
+        padding: 1.88rem 0 1.25rem;
+        border-bottom: 1px solid #e2e2e2;
+    }
+    .event {
+        width: 55%;
+        padding-left: 5%;
+        &--title {
+            font-weight: bold;
+            letter-spacing: 0.03rem;
+            margin-bottom: 0.31rem;
+        }
+        &--date {
+            font-size: 0.88rem;
+            color: #979797;
+        }
+    }
+    .amount {
+        font-size: 1.38rem;
+        letter-spacing: 0.06rem;
+        color: $color-primary;
+    }
+}
+
+/* Element: .care-text ----*/ 
+.care-text {
+    font-size: 0.88rem;
+    letter-spacing: 0.03rem;
+    line-height: 1.19rem;
+    color: #979797;
+    text-align: justify;
+    margin-top: 1.88rem;
+    padding: 0 .62rem;
+}
+
+/*status: 無繳款資訊 */
+.car-status {
+    height: 6.06rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &--text {
+        text-align: center;
+        letter-spacing: 0.03rem;
+        color: #4a4a4a;
+        font-weight: bold;
+    }
+}
+
+/*status: api error */
+.page-error{
+    padding-top: 3.5rem;
+    &--text {
+        font-size: 0.88rem;
+        text-align: center;
+        color: #4a4a4a;
+    }
+}
+
+// element: 新增繳款資訊
+.add-payment {
+    line-height: 58px;
+    text-align: center;
+    font-size: 16px;
+    color: #5E5E5E;
+    letter-spacing: 0.5px;
+    background-image: linear-gradient(-180deg, #FFFFFF 0%, #FEFEFE 100%);
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.09);
+    border-radius: 12px 12px 19px 19px;
+    border-top: 10px solid #9BD0E3;
+    display: block;
+    margin: 0 auto;
+    font-weight: bold;
+    cursor: pointer;
+    img {
+        display: inline-block;
+        margin-right: 4px;
+    }
+}

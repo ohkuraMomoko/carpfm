@@ -1,0 +1,176 @@
+﻿@import "_variables.scss";
+@import "_mixins.scss";
+
+[v-cloak] {
+    display: none;
+}
+/*=Common Styles--------------------------------*/
+body {
+    font-family: $font-tw;
+    font-size: 16px;
+    color: #4A4A4A;
+    padding-top: 60px;
+}
+.center {
+    display: block;
+    margin: 0 auto;
+}
+/*extend function ---*/
+
+/* color common setting class ---*/
+.text-bold {
+    font-weight: bold !important;
+}
+.text-upderline {
+    text-decoration: underline !important;
+}
+.text-center {
+    text-align: center !important;
+}
+.text-lg {
+    font-size: 1.5em;
+}
+/* page common ============*/
+/* Block: .header -------*/
+$headerHeight: 60px;
+$iconSize: 40px;
+.header-box {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;    
+    background-color: #fff;
+    box-shadow: -1px 4px 8px 0 rgba(81,130,147,0.51);
+    z-index: 5;
+}
+.header {
+    height: $headerHeight;
+    position: relative;
+    &-back {
+        width: $iconSize;
+        height: $iconSize;
+        background-image: url('images/arrow_right.svg');
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        background-size: 14px;
+        transform: rotate(180deg);
+        position: absolute;
+        left: 0;
+        top: ($headerHeight - $iconSize)/2;
+    }
+    &-title {
+        color: #979797;
+        text-align: center;
+        font-size: 1.13rem;
+        letter-spacing: 0.03rem;
+        line-height: $headerHeight;
+    }
+    &-close {
+        position: absolute;
+        right: 0;
+        top: ($headerHeight - $iconSize)/2;
+        width: 60px;
+        height: $iconSize;
+        font-size: 1.13rem;
+        color: #979797;
+        line-height: $iconSize;
+        letter-spacing: 0.03rem;
+        text-align: center;
+        cursor: pointer;
+    }
+}  
+
+/* Element: .top-msg -------*/
+.top-msg {
+    background-color: rgba(#000, 0.6);
+    min-width: 2.81rem;
+    font-size: 0.88rem;
+    letter-spacing: 0.03rem;
+    line-height: 1.25rem;
+    color: #fff;
+    padding: .81rem .94rem;
+    text-align: center;
+    &.has-close {
+        padding-right: 3.38rem;
+        position: relative;
+        text-align: left;
+        >.btn-close {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            top: 2px;
+            right: 0;
+            background-image: url('images/btn_cancel.png');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: 15px;
+        }
+    }
+}
+
+/* Block: .tabs -------*/
+.tabs {
+    padding: 0 1.25rem;
+    background: #FFFFFF;
+    &-item {
+        width: 49%;
+        display: inline-block;
+        letter-spacing: 0.03rem;
+        text-align: center;
+        line-height: 35px;
+        color: #979797;
+        border-bottom: .25rem solid transparent;
+        cursor: pointer;
+        &.active {
+            color: $color-primary;
+            border-bottom-color: $color-primary;
+        }
+    }
+}
+
+/* Block: .dashboard -------*/
+.dashboard {
+    min-height: calc(110vh - #{$headerHeight});
+    padding: 0.63rem;
+    background-color: rgba($color-second-bg, .2);
+}
+
+/* Block: .loading ----*/
+.loading {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#000, .2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &-box {
+        width: 130px;
+        height: 130px;
+        background-color: rgba(#fff, .85);
+        border-radius: 30px;
+    }
+    &-pic {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+/* Element: 逾期提示 ----*/
+.alertPoint {
+    position: relative;
+    &:after {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #B15353;
+        position: absolute;
+        right: -10px;
+        top: 0;
+        content: '';
+    }
+}
+/*=Common Styles--------------------------------*/

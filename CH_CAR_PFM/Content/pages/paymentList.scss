@@ -1,0 +1,79 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_reset.scss"; 
+@import "../setting/_mixins.scss"; 
+
+body {
+    padding-top: 105px;
+}
+
+.installment {
+    background-color: #fff;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.09);
+    border-radius: 0 0 15px 15px;
+    
+    &--title {
+        min-height: 2.88rem;
+        line-height: 2.88rem;
+        color: #fff;
+        font-size: 1.13rem;
+        letter-spacing: 0.03rem;
+        text-align: center;
+        background-color: $color-primary-bg;
+        border-top: 2px solid #6CB7D2;
+        padding: 0 5%;
+    }
+    &--content {
+        padding: 1.13rem 5% 0;
+    }
+    &--footer {
+        padding: 0 5% 1.88rem;
+    }
+}
+
+.ar-header {
+    color: #979797;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    &--number {
+        line-height: 1.5;
+    }
+}
+
+.ar-list {
+    border-bottom: 1px solid #e2e2e2;
+}
+.ar-item {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &--id,
+    &--amount {
+        color: #979797;
+        letter-spacing: 0.03rem;
+        line-height: 1.387rem;
+    }
+}
+
+.payment {
+    font-weight: bold;
+    color: #4a4a4a;
+    font-size: 1.13rem;
+    letter-spacing: 0.03rem;
+    margin: 1.53rem auto 1.88rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}   
+.payment-btn {
+    background-color: $color-primary;
+    border-radius: 20px;
+    text-align: center;
+    color: #fff;
+    font-size: 1.13rem;
+    letter-spacing: 0.03rem;
+    line-height: 2.5rem;
+    cursor: pointer;
+}

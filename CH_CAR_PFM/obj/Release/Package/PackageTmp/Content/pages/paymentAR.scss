@@ -1,0 +1,179 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_reset.scss"; 
+@import "../setting/_mixins.scss"; 
+@import "../components/modal"; 
+
+body {
+    padding-top: 125px;
+}
+
+.header-box.hasMsg {
+    box-shadow: none;
+}
+
+.modal {
+    $h: 225px;
+    top: calc(50vh - #{$h/2});
+}
+/* Element: chexkbox =============*/
+.label--checkbox{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkbox {
+    outline: none;
+    position: relative;
+    cursor: pointer;
+    &:before {
+        transition: transform .4s cubic-bezier(.45,1.8,.5,.75);
+        transform: rotate(-45deg) scale(0, 0);
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        z-index: 1;
+        width: .75rem;
+        height: .375rem;
+        border: 2px solid #fff; 
+        border-top-style: none;
+        border-right-style: none;
+    }
+    &:checked {
+        &:before {
+            transform: rotate(-45deg) scale(1, 1);
+        } 
+        &:after {
+            background-color: $color-primary;
+            border-color: $color-primary;
+        }
+    }
+    &:after {
+        content: "";
+        position: absolute;
+        top: -5px;
+        left: -4px;
+        width: 24px;
+        height: 24px;
+        background-color: #fff;
+        border: 1px solid #3333;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+}
+
+/* Block: .dashboard -------*/
+.dashboard {
+    padding-bottom: 120px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Block: .car ----------*/
+.car {
+    background-color: #fff;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 0 5px 0 rgba(198, 198, 198, 1);
+    margin-bottom: 0.94rem;
+}
+
+/* Element: .installment ----------*/
+.installment {
+    margin: 0;
+    &-item {
+        width: 95%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto;
+        padding: 1rem 0;
+        border-bottom: 1px solid #e2e2e2;
+    }
+    .periods {
+        width: 55%;
+        padding-left: 5%;
+        &--number {
+            letter-spacing: 0.03rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        &--limit {
+            font-size: 0.88rem;
+            letter-spacing: 0.03rem;
+            color: #979797;
+        }
+    }
+    .amount {
+        width: 35%;
+        font-size: 1.38rem;
+        letter-spacing: 0.06rem;
+    }
+}
+
+/* Element: .care-text ----*/ 
+.care-text {
+    width: 80%;
+    font-size: 0.88rem;
+    letter-spacing: 0.03rem;
+    line-height: 1.19rem;
+    color: $color-warring;
+    text-align: justify;
+    margin: 0 auto;
+    margin-top: 1.25rem;
+}
+
+/* Element: .allamount ---*/ 
+.allamount {
+    width: 100%;
+    padding: 1.44rem 1rem;
+    background-color: #fff;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    box-shadow: 0 0 5px 0 rgba(198, 198, 198, 1);
+    border-radius: 35px 35px 0 0;
+    &-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &--total {
+        &-text {
+            font-size: 0.88rem;
+            letter-spacing: 0.03rem;
+            color: #979797;
+        }
+        &-money {
+            font-size: 1.38rem;
+            color: $color-primary;
+        }
+    }
+    &--controll {
+        width: auto;
+        &-btn {
+            width: 5.94rem;
+            font-size: 1.13rem;
+            text-align: center;
+            line-height: 2.81rem;
+            color: #fff;
+            background-color: #d8d8d8;
+            border-radius: 11px;
+            cursor: pointer;
+            &.active {
+                background-color: $color-primary;
+            }
+        }
+    }
+    &--tip {
+        font-size: 0.81rem;
+        color: $color-warring;
+        margin-top: 0.5rem;
+    }
+}
+
+/* Block: .paylist -------*/

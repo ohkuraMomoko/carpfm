@@ -1,0 +1,87 @@
+﻿@{ ViewBag.Title = "超商繳款"; } @section header {
+@Styles.Render("~/Content/pages/paymentConStore.min.css") }
+
+<div id="app">
+	<div class="header-box">
+        <div class="header">
+            <div class="header-back" v-on:click="pageBack"></div>
+            <p class="header-title">@ViewBag.Title</p>
+            <a href="@Url.Content("~/home/close")" class="header-close">完成</a>
+        </div>
+    </div>
+	<div class="dashboard">
+        <div class="card">
+            <div class="card-header">
+                <p class="card-header--title">繳款總額</p>
+                <p class="card-header--amount" v-cloak>${{ paymentTotal | amountAddDot }}</p>
+            </div>
+            <div class="card-content">
+                <p class="card-content--title">選擇繳款超商</p>
+                <div class="payment">
+                    <div class="payment-item"
+                        v-on:click="getBarCode_711">
+                        <img src="@Url.Content("~/Content/images/con-711.png")" alt="" class="payment-item--pic">
+                        <div class="payment-item--text">711 繳款條碼</div>
+                    </div>
+                    <div class="payment-item"
+                        v-on:click="getBarCode_fm">
+                        <img src="@Url.Content("~/Content/images/con-Family.png")" alt="" class="payment-item--pic">
+                        <div class="payment-item--text">萊爾富/全家<br>繳款條碼</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <p class="card-footer--desc">完成繳款後，<span>第三個營業日</span>，方可從「繳款紀錄」功能，查詢匯款資訊。
+                    <br>超商繳款手續費外加
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var app = new Vue({
+            el: '#app',
+            mixins: [ myMixin ],
+            data: {
+                userArId: null,
+                userArName: [],
+                userPaymentList: [],
+                userPaymentType: "",
+                paymentTotal: 0
+            },
+            created: function() {
+                this.getUserPayment();
+            },
+            methods: {
+                getUserPayment: function() {
+                    try {
+                        this.userArId = sessionStorage.getItem("userArId");
+                        this.userArName = JSON.parse(
+                            sessionStorage.getItem("userArName")
+                        );
+                        this.userPaymentList = JSON.parse(
+                            sessionStorage.getItem("userPaymentList")
+                        );
+                        this.userPaymentType = sessionStorage.getItem(
+                            "userPaymentType"
+                        );
+                        this.paymentTotal = sessionStorage.getItem("paymentTotal");
+                    }catch { 
+                        alert("sesstion data error");
+                        // this.pageBack();
+                    }
+                },
+                getBarCode_711: function() {
+                    sessionStorage.setItem('storeType', 0);
+                    window.location.href = "Barcode";
+                },
+                getBarCode_fm: function() {
+                    sessionStorage.setItem('storeType', 1);
+                    window.location.href = "Barcode";
+                }
+            }
+        })
+    </script>
+}

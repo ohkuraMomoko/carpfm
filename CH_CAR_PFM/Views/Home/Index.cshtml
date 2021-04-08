@@ -1,0 +1,188 @@
+﻿@section header {
+    @Styles.Render("~/Content/pages/index.min.css")
+}
+
+
+<div id="app">
+    <div v-if="pageLoading" class="loading">
+        <div class="loading-box">
+            <img src="@Url.Content("~/Content/images/loading.gif")" alt="" class="loading-pic">
+        </div>
+    </div>
+
+    <div class="header-box">
+        <div class="header">
+            <a class="header-back" href="@Url.Content("~/home/close")"></a>
+            <p class="header-title">@ViewBag.Title</p>
+        </div>
+        <div class="tabs">
+            <div class="tabs-item active">繳款</div>
+            <a class="tabs-item" href="@Url.Content("~/home/record")">繳款紀錄</a>
+        </div>
+    </div>
+
+    <!-- page: 繳款 -->
+    <div v-if="pageError" class="dashboard page-error" v-cloak>
+        <p class="page-error--text">很抱歉！系統忙碌中，請稍後再試！</p>
+    </div>
+    <div v-else class="dashboard" v-cloak>
+        <!-- data: .car = 一筆標的物 -->
+        <car-element v-for="car in cars"
+                     v-bind:key="car.id"
+                     v-bind:car_data="car"
+                     v-bind:ttl_amt="car.TTL_AMT"
+                     v-bind:ar_dt="car.AR_DT"
+                     v-bind:overdue="car.OVERDUE"
+                     v-bind:cntrt_no="car.CNTRT_NO"></car-element>
+
+        <!-- TODO: 若該帳號允許新增繳款資訊才顯示 -->
+        <a href="@Url.Content("~/home/add")" class="add-payment"
+            v-if="showAddBtn == 'False' ? false : true && appNeedShowBtn">                  
+            <img src="@Url.Content("~/Content/images/ic_add_blue.png")" alt="">
+            新增繳款資訊
+        </a>
+
+        <p class="care-text">
+            溫馨提醒：<br />
+            便利商店代收上限為新台幣6萬元，若帳單應繳金額超過代收上限，請您利用其他方式繳款。<br />
+            ATM繳款帳號：<br />
+            使用ATM或數位通路轉帳，若帳單應繳金額超過您的轉出帳戶銀行規定的最高轉出限額，您可向轉出帳戶銀行約定ATM繳款帳號或洽詢您的業務。
+            <br />
+            逾期延滯費用：<br />
+            提醒您！逾期繳款將於最後一期清償時，依照契約條文收取延滯費用。
+        </p>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+	const Car = Vue.component("car-element", {
+        props: ["car_data", "ttl_amt", "ar_dt", "cntrt_no", "overdue"],
+		data: function() {
+			return {
+				currentPeriodsIsFinish: 0,
+				totalPeriods: 0,
+                statusIsFinish: false
+			};
+		},
+		created: function() {
+			var vm = this;
+            var ar_list = vm.car_data.AR_LIST;
+
+            // 若該標的沒有任何一筆資料 => 沒有需要繳款資訊
+            if (ar_list === null) {
+                vm.statusIsFinish = true;
+                return;
+            }
+
+            vm.isoverdue = ar_list.filter(x => x.OVERDUE === 'Y').length > 0;
+            // console.log(vm.isoverdue);
+
+			// or car_data.AR_LIST.length 取出該標的物的總期數
+            vm.totalPeriods = ar_list[0].AR_CNT;
+
+			// 確認該標的物已繳交期數
+			var newArr = ar_list.map(function(value, index, array) {
+				if (value.PAYMENT_STATUS === "1") {
+					vm.currentPeriodsIsFinish += 1;
+				}
+			});
+        },
+		template: `<div class="car">
+                <div class="car-header" >
+                    <div class="car-header--number">
+                        <div class="car-header--number-text" >車號&nbsp;I&nbsp;</div>
+                        <div class="car-header--number-data"
+                            v-bind:class="{ alertPoint: isoverdue }" >
+                            <p v-for="item in car_data.OBJ_ITEMS" v-text="item.NME"></p>
+                        </div>
+                    </div>
+                    <span class="car-header--periods"
+                        v-if="!statusIsFinish && car_data.IS_PROXY !== 'Y'">
+                        已繳 <span v-text="currentPeriodsIsFinish"></span> 期 /
+                        共 <span v-text="totalPeriods"></span> 期</span>
+                </div>
+                <div v-if="statusIsFinish" class="car-status">
+                    <p class="car-status--text">無繳款資訊</p>
+                </div>
+                <div v-else-if="car_data.IS_PROXY == 'Y'">
+                    <ul class="car-content installment">
+                        <li class="installment-item">
+                            <div class="event">
+                                <p class="event--title">應繳金額</p>
+                                <p class="event--date"
+                                    v-if="car_data.PAYABLE_AMT == 0">本期費用已繳清</p>
+                                <p class="event--date" 
+                                    v-else 
+                                    v-text="'截止日' +ar_dt"></p>
+                            </div>
+                            <div class="amount" v-text="'$'+$options.filters.amountAddDot(car_data.PAYABLE_AMT)"></div>
+                        </li>
+                    </ul>
+                    <a class="car-footer viewmore" v-bind:href="'@Url.Content("~/home/PaymentAR?id=")' + cntrt_no"
+                        v-if="car_data.PAYABLE_AMT !== 0">
+                        前往繳款<img src="@Url.Content("~/Content/images/arrow_right.svg")" alt="arrow">
+                    </a>
+                </div>
+                <div v-else>
+                    <ul class="car-content installment">
+                        <li class="installment-item">
+                            <div class="event">
+                                <p class="event--title">案件總金額</p>
+                                <p class="event--date" 
+                                    v-text="'截止日' +ar_dt"></p>
+                            </div>
+                            <div class="amount" v-text="'$'+$options.filters.amountAddDot(ttl_amt)"></div>
+                        </li>
+                    </ul>
+                    <a class="car-footer viewmore" v-bind:href="'@Url.Content("~/home/PaymentAR?id=")' + cntrt_no">
+                        前往繳款<img src="@Url.Content("~/Content/images/arrow_right.svg")" alt="arrow">
+                    </a>
+                </div>
+
+            </div>`
+	});
+
+	var app = new Vue({
+		el: "#app",
+		component: { Car },
+		mixins: [ myMixin ],
+		data: {
+            userID: null,
+            api: '@Url.Action("GetArLv1New", "AppFormPay")',
+			cars: [],
+            pageError: false,
+            pageLoading: true,
+            isoverdue: false,
+            showAddBtn: false,
+            appNeedShowBtn: false
+		},
+        created: function () {
+            var vm = this;
+            vm.showAddBtn = '@ViewBag.ShowAddButton'
+            // console.log(vm.showAddBtn)
+
+            // 2020/7/21 因APP版本新舊交替之緣故，需多判斷APP端傳來的參數，若有值且為Y and showAddBtn = true，該新增契約之按鈕才可顯示
+            vm.appNeedShowBtn = this.getUrlParameter("show") === 'Y' ? true : false;
+
+			axios.post(vm.api)
+            .then(function (response) {
+                vm.pageLoading = false;
+                if (response.data.Result.ReturnCode != -1) {
+                    // console.log(response.data.Data);
+                    vm.cars = response.data.Data;
+                }
+                else {
+                    alert.log(response.data.Result.Alert);
+                    vm.pageError = true;
+                }
+			})
+			.catch(function(error){
+                vm.pageLoading = false;
+                alert.log(error);
+                vm.pageError = true;
+			});
+		}
+	});
+    </script>
+}

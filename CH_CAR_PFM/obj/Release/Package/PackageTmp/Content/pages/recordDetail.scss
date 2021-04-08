@@ -1,0 +1,140 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_reset.scss"; 
+@import "../setting/_mixins.scss"; 
+
+body {
+    padding-top: 105px;
+}
+
+/* Component: modal =============*/
+.modal-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(#000, 0.2);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+.modal {
+    $w: 325px;
+    width: $w;
+    background-color: #fff;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.09);
+    border-radius: 30px;
+    padding: 0 5%;
+    position: absolute;
+    left: calc((100% - #{$w})/2);
+    bottom: 1.56rem;
+    &-btn {
+        line-height: 4.19rem;
+        text-align: center;
+        font-size: 1.13rem;
+        letter-spacing: 0.03rem;
+        color: #979797;
+        border-bottom: 1px solid #e2e2e2;
+        &--type {
+            color: #7FAEBE;
+        }
+    }
+}
+
+/* Block: .car ----------*/
+.car {
+    background-color: #fff;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.09);
+    margin-bottom: 0.94rem;
+    &-footer {
+        display: block;
+        font-size: 0.88rem;
+        letter-spacing: 0.03rem;
+        line-height: 2.25rem;
+        color: #979797;
+        text-align: right;
+        padding-right: 10px;
+        cursor: pointer;
+        >img {
+            width: 12px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+    }
+}
+.car-header {
+    min-height: 2.88rem;
+    line-height: 2.88rem;
+    color: #fff;
+    background-color: $color-primary-bg;
+    border-top: 2px solid #6CB7D2;
+    padding: 0 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &--number {
+        font-size: 1.13rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        &-data {
+            line-height: 1.5;
+        }
+    }
+}
+
+/* Component: .installment-item ----*/
+.installment-item {
+    padding: .94rem 5%;
+    position: relative;
+    &:after {
+        content: "";
+        width: 90%;
+        height: 1px;
+        background-color: #e2e2e2;
+        position: absolute;
+        left: 5%;
+        bottom: 0;
+    }
+    .info {
+        &-periods,
+        &-status {
+            font-size: 0.88rem;
+            letter-spacing: 0.03rem;
+            line-height: 1.19rem;
+            color: #979797;
+        }
+        &-status {
+            margin: 0.06rem 0;
+        }
+        &-amount {
+            font-size: 1.38rem;
+            color: #6e6e6e;
+            letter-spacing: 0.06rem;
+            line-height: 1.88rem;
+        }
+    }
+    .control {
+        width: 4.5rem;
+        position: absolute;
+        right: 5%;
+        bottom: .94rem;
+        &-payment {
+            font-size: 0.81rem;
+            letter-spacing: 0.03rem;
+            color: #7FAEBE;
+            line-height: 1.44rem;
+            text-align: center;
+            border: 1px solid #7FAEBE;
+            border-radius: 6px;
+        }
+        &-status {
+            background: #7FAEBE;
+            border-radius: 11.5px;
+            font-size: 0.81rem;
+            letter-spacing: 0.03rem;
+            line-height: 1.44rem;
+            color: #ffffff;
+            text-align: center;
+        }
+    }
+}

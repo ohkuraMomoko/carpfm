@@ -1,0 +1,196 @@
+[
+    {
+        "AR_PK": "契約編號_41",
+        "AR_ID": 1,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/01/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "1",
+        "OVERDUE": "N",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_42",
+        "AR_ID": 2,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/02/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "3",
+        "OVERDUE": "Y",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_43",
+        "AR_ID": 3,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/03/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "3",
+        "OVERDUE": "Y",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_44",
+        "AR_ID": 4,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/04/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "3",
+        "OVERDUE": "Y",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_45",
+        "AR_ID": 5,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/05/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "2",
+        "OVERDUE": "N",
+        "CURRENT": "Y",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_46",
+        "AR_ID": 6,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/06/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "2",
+        "OVERDUE": "N",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_47",
+        "AR_ID": 7,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/07/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "2",
+        "OVERDUE": "N",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    },
+    {
+        "AR_PK": "契約編號_48",
+        "AR_ID": 8,
+        "AR_CNT": 10,
+        "AR_AMT": "25000",
+        "AR_DT": "2019/08/01",
+        "AR_DESC": "繳款提示",
+        "AR_PAYDT": "系統收款日",
+        "PAYMENT_STATUS": "2",
+        "OVERDUE": "Y",
+        "OBJ_ITEMS": [
+            {
+                "NME": "EEE-456"
+            },
+            {
+                "NME": "EEE-888"
+            },
+            {
+                "NME": "KJN-888"
+            }
+        ],
+        "PAY_AR_CNT": 2,
+        "TOTAL_AR_CNT": 50
+    }
+
+]
